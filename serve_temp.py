@@ -1,8 +1,9 @@
 #!/usr/bin/python
-from flask import Flask, jsonify
+from flask import Flask
 import gviz_api
 from datetime import *
 from time import *
+#import time
 
 fileName = "test.csv"
 
@@ -14,11 +15,27 @@ table = {"time":   ("datetime", "Time"),
 data = []
 
 def readLines():
-    lines = []
-    myFile = open(fileName, 'r')
-    lines = myFile.readlines()
-    myFile.close()
+    try:
+        myFile = open(fileName, 'r')
+        lines = myFile.readlines()
+        myFile.close()
+        print "clean read " + str(len(lines))
+    except:
+        print "Exception?"
+        lines = "except"
 
+    return lines
+
+def scrapeData():
+    data = []
+    lines = readLines()
+
+    if lines == "except":
+        print "sleeping for 5 second...."
+        time.sleep(5)
+        lines = readLines()
+
+    print "scrapping..." + str(len(lines))
     for line in lines:
         entry = {}
         fields = line.rstrip().split(',')
@@ -26,10 +43,12 @@ def readLines():
         entry["time"] = datetime.fromtimestamp(mktime(theTime))
         entry["temp"] = (float(fields[1]), fields[1].rstrip() + " F")
         data.append(entry)
+    print "done scrapping..."
+    print data
 
 @app.route('/')
 def index():
-    readLines()
+    scrapeData()
     data_table = gviz_api.DataTable(table)
     data_table.LoadData(data)
     resp = app.make_response(data_table.ToJSon(columns_order=("time", "temp"),order_by="time"))
@@ -38,3 +57,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
+
