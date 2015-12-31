@@ -1,8 +1,9 @@
 #!/usr/bin/python
 import pyfirmata
-from Tkinter import *
 import time
+from datetime import datetime
 
+fileName = "test.csv"
 board = pyfirmata.Arduino('/dev/ttyUSB0')
 
 # start an iterator thread so
@@ -16,14 +17,17 @@ while pin0.read() is None:
     pass
 
 def get_temp():
-    label_text = "Temp: %6.1f F" % (
-    pin0.read() * 5 * 100 * 9 / 5 +32)
-    return label_text
+    return (pin0.read() * 5 * 100 * 9 / 5 +32)
 
 def cleanup():
     # clean up on exit
     board.exit()
 
 while True:
-    print get_temp()
+    myFile = open(fileName, 'a')
+    currTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    temp = get_temp()
+    myFile.write(currTime + "," + str(temp) + "\n")
+    myFile.close()
     time.sleep(10)
+
