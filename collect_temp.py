@@ -29,5 +29,5 @@ while True:
     temp = get_temp()
     myFile.write(currTime + "," + str(temp) + "\n")
     myFile.close()
-    time.sleep(10)
+    time.sleep(300)
 

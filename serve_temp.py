@@ -48,6 +48,7 @@ def scrapedata():
 
 @app.route('/')
 def index():
+    print "begin request..."
     scrapedata()
     data_table = gviz_api.DataTable(table)
     data_table.LoadData(data)
@@ -57,4 +58,12 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+#    app.run(host='0.0.0.0', debug=True)
+
+    from tornado.wsgi import WSGIContainer
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+
+    http_server = HTTPServer(WSGIContainer(app))
+    http_server.listen(5000)
+    IOLoop.instance().start()
