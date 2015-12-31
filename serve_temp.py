@@ -14,7 +14,7 @@ table = {"time":   ("datetime", "Time"),
 data = []
 
 def readLines():
-    lines = []
+    data = []
     myFile = open(fileName, 'r')
     lines = myFile.readlines()
     myFile.close()
